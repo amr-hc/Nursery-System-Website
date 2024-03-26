@@ -29,59 +29,14 @@ exports.getclassteacherById = (req, res, next) => {
 
 exports.insert = (req, res, next) => {
  
-    // req.body.children.forEach(e => {   
-    //     childSchema.findOne({_id: e}).then(object=>{
-    //         if(!object)
-    //             next(new Error(`children id: ${e} is not Exist`));
-    //     });
-    // });
-
-      
-        childSchema.find({_id: {$in: req.body.children} }).then(object=>{
-            if(object.length!=req.body.children.length){
-                next(new Error("there is id children not Exist"));
-            }else{
-
-                TeacherSchema.findOne({_id: req.body.supervisor}).then(object=>{
-                    if(!object)
-                        next(new Error("This supervisor is not Exist"))
-                    else
-                    {
-                        let object = new classSchema(req.body)
-                        object.save().then((data)=>{res.status(200).json({ data: data })}).catch((error) => next(error));
-                    }
-                }).catch((err)=>{next(err)});
-
-            }
-        });
-
-
-
-
-
+    let object = new classSchema(req.body)
+    object.save().then((data)=>{res.status(200).json({ data: data })}).catch((error) => next(error));
 
 };
 
 exports.update = (req, res, next) => {
     
-
-
-    childSchema.find({_id: {$in: req.body.children} }).then(object=>{
-        if(object.length!=req.body.children.length){
-            next(new Error("there is id children not Exist"));
-        }else{
-
-            TeacherSchema.findOne({_id: req.body.supervisor}).then(object=>{
-                if(!object)
-                    next(new Error("This supervisor is not Exist"))
-                else
-                {
-                    classSchema.findOneAndUpdate({ _id: req.body._id },req.body).then((data)=>{res.status(200).json(data);})
-                }
-            }).catch((err)=>{next(err)});
-
-        }
-    });
+    classSchema.findOneAndUpdate({ _id: req.body._id },req.body).then((data)=>{res.status(200).json(data);})
 
 };
 
