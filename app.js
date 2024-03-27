@@ -7,8 +7,6 @@ const classRoute = require("./Routes/classRoute");
 const loginRoute = require("./Routes/loginRoute");
 const authentication = require("./Midelwares/authenticationMW");
 
-
-
 const server = express();
 const port = process.env.PORT || 8080;
 
@@ -24,6 +22,8 @@ mongoose.connect("mongodb://127.0.0.1:27017/nurserySystem")
 
 
 server.use(express.json());
+
+
 
 server.use(loginRoute);
 

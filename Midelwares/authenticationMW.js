@@ -24,7 +24,9 @@ module.exports.isAdminOrSameTeacher = (req, res, next) => {
     if(req.token.role === "admin")
         next();
     else if(req.token.id==req.body._id){
-        console.log(req.body._id);
+        req.params.id=req.body._id; 
+        next();}
+    else if(req.token.id==req.params.id){
         next();}
     else
         next(new Error("not Authorizatied"));
