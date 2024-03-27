@@ -4,22 +4,7 @@ const bcrypt = require('bcrypt');
 const multer = require("multer");
 const fs = require('fs');
 
-exports.testonly = (req, res, next) => {
-  console.log(req.body);
-  next();
-};
 
-// const multerStorage = multer.diskStorage({
-//   destination : (req , file , cb)=>{
-//     cb(null,"photos/teachers/");
-//   },
-//   filename : (req , file , cb)=>{
-//     const ext = file.mimetype.split('/')[1];
-//     const photoName = `teacher-${Math.random()}-${Date.now()}.${ext}`
-//     req.body.image = photoName;
-//     cb(null,photoName);
-//   }
-// });
 
 const multerStorage = multer.memoryStorage();
 
@@ -74,7 +59,7 @@ exports.cheackID = (req, res, next, val) => {
 };
 
 exports.insert = (req, res, next) => {
-  req.body.images = "default.img";
+  req.body.image = "default.img";
    bcrypt.hash(req.body.password, 10).then((data)=> {
     req.body.password = data;
     TeacherSchema.create(req.body).then((data)=>{

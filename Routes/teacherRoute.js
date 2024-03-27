@@ -13,7 +13,6 @@ router.route('/teachers')
         .post(isAdmin,teacherController.uploadPhoto,teacherValidation.insert,validatorResult,teacherController.insert)
         .patch(isAdminOrSameTeacher,teacherController.uploadPhoto,teacherValidation.update,validatorResult,teacherController.update);
 
-router.route('/teachers/upload').post(teacherController.uploadPhoto,teacherController.testonly);
 
 router.route('/teachers/supervisors').get(teacherController.supervisors);
 

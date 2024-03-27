@@ -5,6 +5,7 @@ const teacherRoute = require("./Routes/teacherRoute");
 const childRoute = require("./Routes/childRoute");
 const classRoute = require("./Routes/classRoute");
 const loginRoute = require("./Routes/loginRoute");
+const registerRoute = require("./Routes/registerRoute");
 const authentication = require("./Midelwares/authenticationMW");
 
 const server = express();
@@ -20,10 +21,10 @@ mongoose.connect("mongodb://127.0.0.1:27017/nurserySystem")
     })
     .catch((err) => {console.log(err)});
 
-// server.use(express.static('photo'));
 
 server.use(express.json());
 
+server.use(registerRoute);
 server.use(loginRoute);
 
 server.use(authentication);
