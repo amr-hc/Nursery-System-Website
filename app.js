@@ -20,10 +20,9 @@ mongoose.connect("mongodb://127.0.0.1:27017/nurserySystem")
     })
     .catch((err) => {console.log(err)});
 
+// server.use(express.static('photo'));
 
 server.use(express.json());
-
-
 
 server.use(loginRoute);
 

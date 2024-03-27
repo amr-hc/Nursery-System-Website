@@ -2,21 +2,26 @@ const TeacherSchema = require("./../Model/teacherModel");
 const APIFeatures = require("./../utils/APIFeatures");
 const bcrypt = require('bcrypt');
 const multer = require("multer");
+const fs = require('fs');
 
 exports.testonly = (req, res, next) => {
   console.log(req.body);
   next();
 };
 
-const multerStorage = multer.diskStorage({
-  destination : (req , file , cb)=>{
-    cb(null,"photos/teachers/");
-  },
-  filename : (req , file , cb)=>{
-    const ext = file.mimetype.split('/')[1];
-    cb(null,`teacher1.jpg`);
-  }
-});
+// const multerStorage = multer.diskStorage({
+//   destination : (req , file , cb)=>{
+//     cb(null,"photos/teachers/");
+//   },
+//   filename : (req , file , cb)=>{
+//     const ext = file.mimetype.split('/')[1];
+//     const photoName = `teacher-${Math.random()}-${Date.now()}.${ext}`
+//     req.body.image = photoName;
+//     cb(null,photoName);
+//   }
+// });
+
+const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, cb)=>{
   if(file.mimetype.startsWith("image")){
@@ -33,6 +38,18 @@ const upload = multer({
 });
 
 exports.uploadPhoto = upload.single("photo");;
+
+
+
+const saveImage =(data,req,res,next)=>{
+  fs.writeFile(`images/teachers/${data._id}.${req.file.mimetype.split('/')[1]}`, req.file.buffer, err => {
+    if (err) 
+      next(Error("Can't save your photo"));
+    else
+      res.status(200).json(data);
+    
+  });
+}
 
 exports.getAllTeacher=(req,res,next)=>{
 
@@ -57,16 +74,32 @@ exports.cheackID = (req, res, next, val) => {
 };
 
 exports.insert = (req, res, next) => {
-
+  req.body.images = "default.img";
    bcrypt.hash(req.body.password, 10).then((data)=> {
     req.body.password = data;
-    TeacherSchema.create(req.body).then((data)=>{res.status(200).json({ data: data })}).catch((error) => next(error));
+    TeacherSchema.create(req.body).then((data)=>{
+      if (req.file && req.file.buffer){
+        TeacherSchema.findOneAndUpdate({ _id: data._id },{image:`${data._id}.${req.file.mimetype.split('/')[1]}`}).then((data)=>{      
+          saveImage(data,req,res,next);}).catch((error) => next(error));
+      }
+      else 
+          res.status(200).json({ data: data });
+        
+    }).catch((error) => next(error));
     });
 
 };
 
 exports.update = (req, res, next) => {
-    TeacherSchema.findOneAndUpdate({ _id: req.body._id },req.body).then((data)=>{res.status(200).json(data);}).catch((error) => next(error));
+  
+    req.body.image = `${req.body._id}.${req.file.mimetype.split('/')[1]}`;
+    TeacherSchema.findOneAndUpdate({ _id: req.body._id },req.body).then((data)=>{      
+      saveImage(data,req,res,next);
+
+      }).catch((error) => next(error));
+
+ 
+    
 };
 
 exports.updatePassword = (req, res, next) => {
