@@ -65,7 +65,6 @@ exports.insert = (req, res, next) => {
     req.body.password = data;
     TeacherSchema.create(req.body).then((data)=>{
       if (req.file && req.file.buffer){
-        console.log(req.file)
         const extension = req.file.originalname.split('.')[req.file.originalname.split('.').length-1];
         TeacherSchema.findOneAndUpdate({ _id: data._id },{image:`${data._id}.${extension}`}).then((data)=>{      
           saveImage(data,req,res,next);}).catch((error) => next(error));
