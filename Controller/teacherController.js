@@ -27,7 +27,8 @@ exports.uploadPhoto = upload.single("photo");;
 
 
 const saveImage =(data,req,res,next)=>{
-  fs.writeFile(`images/teachers/${data._id}.${req.file.mimetype.split('/')[1]}`, req.file.buffer, err => {
+  const extension = req.file.originalname.split('.')[req.file.originalname.split('.').length-1];
+  fs.writeFile(`images/teachers/${data._id}.${extension}`, req.file.buffer, err => {
     if (err) 
       next(Error("Can't save your photo"));
     else
@@ -59,12 +60,14 @@ exports.cheackID = (req, res, next, val) => {
 };
 
 exports.insert = (req, res, next) => {
-  req.body.image = "default.img";
+  req.body.image = "default.jpg";
    bcrypt.hash(req.body.password, 10).then((data)=> {
     req.body.password = data;
     TeacherSchema.create(req.body).then((data)=>{
       if (req.file && req.file.buffer){
-        TeacherSchema.findOneAndUpdate({ _id: data._id },{image:`${data._id}.${req.file.mimetype.split('/')[1]}`}).then((data)=>{      
+        console.log(req.file)
+        const extension = req.file.originalname.split('.')[req.file.originalname.split('.').length-1];
+        TeacherSchema.findOneAndUpdate({ _id: data._id },{image:`${data._id}.${extension}`}).then((data)=>{      
           saveImage(data,req,res,next);}).catch((error) => next(error));
       }
       else 
