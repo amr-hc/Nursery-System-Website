@@ -9,10 +9,10 @@ const registerRoute = require("./Routes/registerRoute");
 const authentication = require("./Midelwares/authenticationMW");
 
 const server = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT;
 
 
-mongoose.connect("mongodb://127.0.0.1:27017/nurserySystem")
+mongoose.connect(`mongodb://${process.env.URL_DATABASE}:${process.env.PORT_DATABASE}/nurserySystem`)
     .then(()=>{
         console.log("Connected to MongoDB");
         server.listen(port,()=>{
