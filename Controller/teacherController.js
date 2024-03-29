@@ -117,3 +117,14 @@ exports.supervisors = (req, res, next) => {
         }
         }]).then((data)=>{res.status(200).json(data)}).catch((error) => next(error))
 };
+
+
+exports.deleteByID = (req, res, next) => {
+  TeacherSchema.findByIdAndDelete(req.params.id).then((data)=>{
+    if(data){
+      res.status(200).json({data:"success delete"})
+    }else   
+       res.status(404).json({data:"not found"});   
+    }).catch((error) => next(error));
+
+};
