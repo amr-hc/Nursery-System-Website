@@ -1,7 +1,6 @@
 const TeacherSchema = require("./../Model/teacherModel");
 const APIFeatures = require("./../utils/APIFeatures");
 const bcrypt = require('bcrypt');
-
 const uploadController = require('./uploadController');
 
 
@@ -31,6 +30,8 @@ exports.cheackID = (req, res, next, val) => {
     
 };
 
+
+
 exports.insert = (req, res, next) => {
   req.body.image = "default.jpg";
    bcrypt.hash(req.body.password, 10).then((data)=> {
@@ -48,6 +49,8 @@ exports.insert = (req, res, next) => {
 
 };
 
+
+
 exports.update = (req, res, next) => {
     req.body.image = `${req.body._id}.${uploadController.extension(req)}`;
     TeacherSchema.findOneAndUpdate({ _id: req.body._id },req.body).then((data)=>{      
@@ -55,16 +58,39 @@ exports.update = (req, res, next) => {
 
       }).catch((error) => next(error));
 
- 
-    
 };
 
+
+
 exports.updatePassword = (req, res, next) => {
-  bcrypt.hash(req.body.password, 10).then((data)=> {
-    req.body.password = data;
-    TeacherSchema.findOneAndUpdate({ _id: req.params.id },{"password":req.body.password}).then((data)=>{res.status(200).json(data);}).catch((error) => next(error));
-    });
-  };
+  
+
+  bcrypt.hash(req.body.newPassword, 10).then((hash)=> {
+   
+    if(req.token.role=="admin"){
+
+      TeacherSchema.findOneAndUpdate({ email: req.body.email },{"password":hash}).then((data)=>{res.status(200).json(data);}).catch((error) => next(error));
+
+    }else{
+      TeacherSchema.findOne({email: req.body.email},{password:1}).then((data)=>{
+        
+        bcrypt.compare(req.body.password,data.password).then((result)=>{
+          if(result){
+            TeacherSchema.findOneAndUpdate({ email: req.body.email },{"password":hash}).then((data)=>{res.status(200).json({data:"changed password Successful"});}).catch((error) => next(error));
+          }else{
+              throw new Error("Wrong Password");
+          }
+
+        }).catch((error) => next(error))
+      });
+
+    }
+  
+  }).catch((error) => next(error));
+
+
+  }
+
 
 exports.supervisors = (req, res, next) => {
     TeacherSchema.aggregate([

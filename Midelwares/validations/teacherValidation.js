@@ -14,5 +14,7 @@ exports.update=[
 ]
 
 exports.updatePassword=[
-     body("password").isString().isLength({min:8}).withMessage("Password must be at least 8 characters"),
+     body("email").isEmail().withMessage("Must be a valid email"),
+     body("password").optional().isString().isLength({min:8}).withMessage("Password must be at least 8 characters"),
+     body("newPassword").isString().isLength({min:8}).withMessage("Password must be at least 8 characters"),
 ]

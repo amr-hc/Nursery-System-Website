@@ -7,13 +7,14 @@ const admins = mongoose.connection.collection('admin');
 
 exports.login=(req, res, next) => {
     TeacherSchema.findOne({email: req.body.email},{password:1,_id:1}).then((object)=>{
+        console.log(object)
         let role;
         if (object) {
             role = 'teacher';
             bcrypt.compare(req.body.password,object.password).then((result)=>{
                 if(result){
                     const token = jwt.sign({
-                        id : object.id,
+                        id : object._id,
                         role : role,
                     },process.env.SECRETKEY,
                     {
