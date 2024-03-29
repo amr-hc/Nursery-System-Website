@@ -12,6 +12,7 @@ const schema = new mongoose.Schema({
     age: Number,
     fullname: String,
     level: String,
+    image: String,
     address: addressSchema
 
 });

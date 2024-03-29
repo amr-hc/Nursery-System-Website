@@ -3,6 +3,7 @@ const teacherController = require('./../Controller/teacherController');
 const teacherValidation = require('./../Midelwares/validations/teacherValidation');
 const validatorResult = require('./../Midelwares/validations/validatorResult');
 const {isAdmin,isAdminOrSameTeacher }= require('./../Midelwares/authenticationMW');
+const uploadController = require('./../Controller/uploadController');
 
 
 const router = express.Router();
@@ -10,8 +11,8 @@ const router = express.Router();
 
 router.route('/teachers')
         .get(isAdmin,teacherController.getAllTeacher)
-        .post(teacherController.uploadPhoto,isAdmin,teacherValidation.insert,validatorResult,teacherController.insert)
-        .patch(teacherController.uploadPhoto,isAdminOrSameTeacher,teacherValidation.update,validatorResult,teacherController.update);
+        .post(uploadController.uploadPhoto,isAdmin,teacherValidation.insert,validatorResult,teacherController.insert)
+        .patch(uploadController.uploadPhoto,isAdminOrSameTeacher,teacherValidation.update,validatorResult,teacherController.update);
 
 
 router.route('/teachers/supervisors').get(teacherController.supervisors);

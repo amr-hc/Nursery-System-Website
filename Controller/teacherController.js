@@ -1,41 +1,13 @@
 const TeacherSchema = require("./../Model/teacherModel");
 const APIFeatures = require("./../utils/APIFeatures");
 const bcrypt = require('bcrypt');
-const multer = require("multer");
-const fs = require('fs');
+
+const uploadController = require('./uploadController');
 
 
 
-const multerStorage = multer.memoryStorage();
-
-const multerFilter = (req, file, cb)=>{
-  if(file.mimetype.startsWith("image")){
-    cb(null, true);
-  }else{
-    cb(new Error("Can upload images only"), false);
-  }
-
-};
-
-const upload = multer({
-  storage : multerStorage,
-  fileFilter : multerFilter
-});
-
-exports.uploadPhoto = upload.single("photo");;
 
 
-
-const saveImage =(data,req,res,next)=>{
-  const extension = req.file.originalname.split('.')[req.file.originalname.split('.').length-1];
-  fs.writeFile(`images/teachers/${data._id}.${extension}`, req.file.buffer, err => {
-    if (err) 
-      next(Error("Can't save your photo"));
-    else
-      res.status(200).json(data);
-    
-  });
-}
 
 exports.getAllTeacher=(req,res,next)=>{
 
@@ -65,9 +37,8 @@ exports.insert = (req, res, next) => {
     req.body.password = data;
     TeacherSchema.create(req.body).then((data)=>{
       if (req.file && req.file.buffer){
-        const extension = req.file.originalname.split('.')[req.file.originalname.split('.').length-1];
-        TeacherSchema.findOneAndUpdate({ _id: data._id },{image:`${data._id}.${extension}`}).then((data)=>{      
-          saveImage(data,req,res,next);}).catch((error) => next(error));
+        TeacherSchema.findOneAndUpdate({ _id: data._id },{image:`${data._id}.${uploadController.extension(req)}`}).then((data)=>{      
+          uploadController.saveImage("teachers",data,req,res,next);}).catch((error) => next(error));
       }
       else 
           res.status(200).json({ data: data });
@@ -78,10 +49,9 @@ exports.insert = (req, res, next) => {
 };
 
 exports.update = (req, res, next) => {
-  
-    req.body.image = `${req.body._id}.${req.file.mimetype.split('/')[1]}`;
+    req.body.image = `${req.body._id}.${uploadController.extension(req)}`;
     TeacherSchema.findOneAndUpdate({ _id: req.body._id },req.body).then((data)=>{      
-      saveImage(data,req,res,next);
+      uploadController.saveImage("teachers",data,req,res,next);
 
       }).catch((error) => next(error));
 
