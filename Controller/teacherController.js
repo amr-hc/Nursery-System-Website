@@ -1,5 +1,5 @@
 const TeacherSchema = require("./../Model/teacherModel");
-const APIFeatures = require("./../utils/APIFeatures");
+const classModel = require("./../Model/classModel");
 const bcrypt = require('bcrypt');
 const uploadController = require('./uploadController');
 
@@ -10,25 +10,15 @@ const uploadController = require('./uploadController');
 
 exports.getAllTeacher=(req,res,next)=>{
 
-    let api = new APIFeatures(TeacherSchema,req.query).filter().sort().select().paginate();
-
-    api.query.then((data)=>{res.status(200).json(data);});
+  TeacherSchema.find({}).then((data)=>{res.status(200).json({status: "success",data: data,});}).catch((err) => {next(err);});
 }
 
 
 exports.getTeacherById = (req, res, next) => {
-    TeacherSchema.findOne({_id:req.params.id}).then((data)=>{res.status(200).json(data);})
+    TeacherSchema.findOne({_id:req.params.id}).then((data)=>{res.status(200).json({status: "success",data: data,});}).catch((err) => {next(err);});
     
 };
-exports.cheackID = (req, res, next, val) => {
-    if(!isNaN(val)){
-      next();
-    }else{
-      const error = new Error("Invalid id");
-      next(error);
-    }
-    
-};
+
 
 
 
@@ -37,7 +27,7 @@ exports.insert = (req, res, next) => {
    bcrypt.hash(req.body.password, 10).then((data)=> {
     req.body.password = data;
     TeacherSchema.create(req.body).then((data)=>{
-      if (req.file && req.file.buffer){
+      if (req.file){
         TeacherSchema.findOneAndUpdate({ _id: data._id },{image:`${data._id}.${uploadController.extension(req)}`}).then((data)=>{      
           uploadController.saveImage("teachers",data,req,res,next);}).catch((error) => next(error));
       }
@@ -69,7 +59,8 @@ exports.updatePassword = (req, res, next) => {
    
     if(req.token.role=="admin"){
 
-      TeacherSchema.findOneAndUpdate({ email: req.body.email },{"password":hash}).then((data)=>{res.status(200).json(data);}).catch((error) => next(error));
+      TeacherSchema.findOneAndUpdate({ email: req.body.email },{"password":hash}).then((data)=>{res.status(200).json({status: "success",
+      message: "chaneged password successfully"});}).catch((error) => next(error));
 
     }else{
       TeacherSchema.findOne({email: req.body.email},{password:1}).then((data)=>{
@@ -120,11 +111,21 @@ exports.supervisors = (req, res, next) => {
 
 
 exports.deleteByID = (req, res, next) => {
-  TeacherSchema.findByIdAndDelete(req.params.id).then((data)=>{
+  classModel.findOne({supervisor: req.params.id}).then((data)=>{
     if(data){
-      res.status(200).json({data:"success delete"})
-    }else   
-       res.status(404).json({data:"not found"});   
-    }).catch((error) => next(error));
+      res.status(400).json({data:"Can't delete this user because this user supervisor class"})
+    }else{
+      TeacherSchema.findByIdAndDelete(req.params.id).then((data)=>{
+        if(data){
+          res.status(200).json({status: "success",
+          message: "Deleted successfully"})
+        }else   
+           res.status(404).json({status: "failed",
+           message: "this user is not exist"});   
+        }).catch((error) => next(error));
+
+    }
+  })
+
 
 };

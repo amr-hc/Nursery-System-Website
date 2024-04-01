@@ -22,7 +22,7 @@ const upload = multer({
 
 exports.uploadPhoto = upload.single("photo");
 
-const extension = (req)=>req.file.originalname.split('.')[req.file.originalname.split('.').length-1];
+const extension = (req)=>req.file.originalname.split('.').pop();
 exports.extension = extension;
 
 exports.saveImage =(folder,data,req,res,next)=>{
@@ -30,7 +30,9 @@ exports.saveImage =(folder,data,req,res,next)=>{
       if (err) 
         next(Error("Can't save your photo"));
       else
-        res.status(200).json(data);
+        res.status(201).json(
+      {status: "success"}
+          );
       
     });
   }

@@ -23,7 +23,7 @@ checkIdSupervisor = async (supervisor_id)=>{
 }
 
 exports.insert=[
-    body("supervisor").isInt().withMessage("id Must be an integer").custom(checkIdSupervisor),
+    body("supervisor").isMongoId().withMessage("supervisor Must be an MongoId").custom(checkIdSupervisor),
     body("name").isAlpha().withMessage("name must be string").isLength({min:3}).withMessage("Must be at least 3 characters"),
     body("children").isArray().custom(checkIdChildren),
     body("children.*").optional().isInt().withMessage("Child ID must be an integer")
@@ -31,7 +31,7 @@ exports.insert=[
 
 exports.update=[
     body("_id").isInt().withMessage("id Must be an integer"),
-    body("supervisor").optional().isInt().withMessage("supervisor must be an integer").custom(checkIdSupervisor),
+    body("supervisor").optional().isMongoId().withMessage("supervisor must be an MongoId").custom(checkIdSupervisor),
     body("name").optional().isAlpha().withMessage("name Must be string").isLength({min:3}).withMessage("name must be at least 3 characters"),
     body("children").optional().isArray().custom(checkIdChildren),
     body("children.*").optional().optional().isInt().withMessage("Child ID must be an integer")

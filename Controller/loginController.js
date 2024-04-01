@@ -7,15 +7,12 @@ const admins = mongoose.connection.collection('admin');
 
 exports.login=(req, res, next) => {
     TeacherSchema.findOne({email: req.body.email},{password:1,_id:1}).then((object)=>{
-        console.log(object)
-        let role;
         if (object) {
-            role = 'teacher';
             bcrypt.compare(req.body.password,object.password).then((result)=>{
                 if(result){
                     const token = jwt.sign({
                         id : object._id,
-                        role : role,
+                        role : 'teacher',
                     },process.env.SECRETKEY,
                     {
                         expiresIn:"15hr"
@@ -31,12 +28,11 @@ exports.login=(req, res, next) => {
 
             admins.findOne({email: req.body.email},{password:1,_id:1}).then((object)=>{
                 if(object){
-                    role = 'admin';
                     bcrypt.compare(req.body.password,object.password).then((result)=>{
                         if(result){
                             const token = jwt.sign({
                                 id : object.id,
-                                role : role,
+                                role : 'admin',
                             },process.env.SECRETKEY,
                             {
                                 expiresIn:"15hr"

@@ -3,7 +3,7 @@ const sequence = require("mongoose-sequence")(mongoose);
 
 const schema = new mongoose.Schema({
     _id: Number,
-    supervisor: {type: Number, ref:"teachers"},
+    supervisor: {type: String, ref:"teachers"},
     name: String,
     children: [{type: Number, ref:"childs"}],
 

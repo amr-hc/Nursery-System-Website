@@ -1,6 +1,7 @@
 
 const childSchema = require("./../Model/childModel");
 const uploadController = require('./uploadController');
+const classModel = require("./../Model/classModel");
 
 exports.getAllChild=(req,res,next)=>{
     childSchema.find({})
@@ -40,3 +41,23 @@ childSchema.findOneAndUpdate({ _id: req.body._id },req.body).then((data)=>{
 exports.supervisors = (req, res, next) => {
 res.status(200).json({ data: "supervisors" });
 };
+
+
+exports.deleteByID = (req, res, next) => {
+    classModel.updateMany(
+        {children: req.params.id}, 
+        {$pull: { children: req.params.id }}).catch((error) => next(error));
+    
+        
+        childSchema.findByIdAndDelete(req.params.id).then((data)=>{
+            if(data){
+              res.status(200).json({status: "success",
+              message: "Deleted successfully"})
+            }else   
+               res.status(404).json({status: "failed",
+               message: "this child is not exist"});   
+            }).catch((error) => next(error));
+   
+  
+  
+  };

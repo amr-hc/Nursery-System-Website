@@ -16,7 +16,7 @@ router.route('/child')
 
 
 
-router.route('/child/:id').get(childController.getchildById)
+router.route('/child/:id').get(childController.getchildById).delete(childController.deleteByID)
 
 
 

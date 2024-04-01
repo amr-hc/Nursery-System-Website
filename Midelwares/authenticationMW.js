@@ -5,7 +5,6 @@ module.exports = (req, res, next) => {
     let token = req.headers.authorization.split(" ")[1];
     let decode_token = jwt.verify(token,process.env.SECRETKEY);
         req.token = decode_token;
-        console.log(decode_token);
         next();
     }catch(error) {
         error.message = "not Athenticated";

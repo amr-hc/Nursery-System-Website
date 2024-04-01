@@ -8,7 +8,8 @@ const childSchema = require("./../Model/childModel");
 
 exports.getAllclass=(req,res,next)=>{
     classSchema.find({})
-    .populate({ path: "supervisor", select:{fullname:1}}).populate({ path: "children", select:{fullname:1}})
+    .populate({ path: "supervisor", select:{fullname:1}})
+    .populate({ path: "children", select:{fullname:1}})
     .then((data)=>{
         res.status(200).json(data);}).catch((err)=>{next(err)});  
 }
@@ -30,7 +31,8 @@ exports.getclassteacherById = (req, res, next) => {
 exports.insert = (req, res, next) => {
  
     let object = new classSchema(req.body)
-    object.save().then((data)=>{res.status(200).json({ data: data })}).catch((error) => next(error));
+    object.save().then((data)=>{res.status(200).json({status: "success",
+    message: "class created successfully"})}).catch((error) => next(error));
 
 };
 

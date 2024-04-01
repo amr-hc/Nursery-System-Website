@@ -7,6 +7,9 @@ const classRoute = require("./Routes/classRoute");
 const loginRoute = require("./Routes/loginRoute");
 const registerRoute = require("./Routes/registerRoute");
 const authentication = require("./Midelwares/authenticationMW");
+const swaggerUI = require("swagger-ui-express");
+const documentSwagger = require("./swagger.json");
+
 
 const server = express();
 const port = process.env.PORT;
@@ -21,7 +24,7 @@ mongoose.connect(`mongodb://${process.env.URL_DATABASE}:${process.env.PORT_DATAB
     })
     .catch((err) => {console.log(err)});
 
-
+server.use("/document-api", swaggerUI.serve, swaggerUI.setup(documentSwagger));
 server.use(express.json());
 
 server.use(registerRoute);

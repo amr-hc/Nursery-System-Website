@@ -19,7 +19,6 @@ router.route('/teachers/supervisors').get(teacherController.supervisors);
 
 router.route('/teachers/changepassword').patch(teacherValidation.updatePassword,validatorResult,teacherController.updatePassword);
 
-// router.param("id",teacherController.cheackID);
 
 router.route('/teachers/:id').get(teacherController.getTeacherById).delete(isAdmin,teacherController.deleteByID)
                              
