@@ -32,7 +32,7 @@ exports.insert = (req, res, next) => {
           uploadController.saveImage("teachers",data,req,res,next);}).catch((error) => next(error));
       }
       else 
-          res.status(200).json({ data: data });
+          res.status(200).json({status: "success"});
         
     }).catch((error) => next(error));
     });
