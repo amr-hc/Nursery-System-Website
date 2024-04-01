@@ -31,7 +31,7 @@ exports.login=(req, res, next) => {
                     bcrypt.compare(req.body.password,object.password).then((result)=>{
                         if(result){
                             const token = jwt.sign({
-                                id : object.id,
+                                id : object._id,
                                 role : 'admin',
                             },process.env.SECRETKEY,
                             {
