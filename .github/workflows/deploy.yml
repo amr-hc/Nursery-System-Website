@@ -10,11 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up SSH
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
@@ -22,22 +20,18 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H 13.60.214.129 >> ~/.ssh/known_hosts
 
-      # Step 3: Deploy to EC2
+      - name: Test SSH Connection
+        run: |
+          ssh -T -i ~/.ssh/id_rsa ec2-user@13.60.214.129 "echo Connected successfully"
+
       - name: Deploy to EC2
         run: |
-          ssh -i ~/.ssh/id_rsa ec2-user@13.60.214.129 << 'EOF'
+          ssh -T -i ~/.ssh/id_rsa ec2-user@13.60.214.129 << 'EOF'
           cd /home/ec2-user/Nursery-System-Website
-          
-          # Pull the latest code from Git
           git pull
-          
-          # Add environment variables to .env file using GitHub Secrets
           echo "SECRETKEY='MySecretCODE555d432s5'" > .env
-          echo "URL_DATABASE='${{ secrets.database_url }}'" >> .env
-          echo "PORT=${{ secrets.port }}" >> .env
-          
-          # Install dependencies
+          echo "URL_DATABASE='***'" >> .env
+          echo "PORT=8080" >> .env
           npm install
-          
-          # Restart the application with PM2
-          node app
+          pm2 restart app
+          EOF
