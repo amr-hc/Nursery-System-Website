@@ -15,7 +15,7 @@ const server = express();
 const port = process.env.PORT;
 
 
-mongoose.connect(`mongodb://${process.env.URL_DATABASE}:${process.env.PORT_DATABASE}/nurserySystem`)
+mongoose.connect(`${process.env.URL_DATABASE}nurserySystem`)
     .then(()=>{
         console.log("Connected to MongoDB");
         server.listen(port,()=>{
