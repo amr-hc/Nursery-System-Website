@@ -30,7 +30,7 @@ jobs:
           cd /home/ec2-user/Nursery-System-Website
           git pull
           echo "SECRETKEY='MySecretCODE555d432s5'" > .env
-          echo "URL_DATABASE='***'" >> .env
+          echo "URL_DATABASE='${{ secrets.DATABASE_URL }}'" >> .env
           echo "PORT=8080" >> .env
           npm install
           pm2 start app.js --name app || pm2 restart app --update-env
