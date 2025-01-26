@@ -22,7 +22,7 @@ jobs:
 
       - name: Test SSH Connection
         run: |
-          ssh -T -i ~/.ssh/id_rsa ec2-user@13.60.214.129 "echo Connected successfully"
+          ssh -T -i ~/.ssh/id_rsa ec2-user@13.61.185.81 "echo Connected successfully"
 
       - name: Deploy to EC2
         run: |
