@@ -1,0 +1,22 @@
+service: test-deploy-lambda
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: eu-north-1
+  deploymentBucket:
+    name: mybucketamr
+  environment:
+    PORT: 3000
+    SECRETKEY: MySecretCODE555d432s5
+    URL_DATABASE: mongodb+srv://amro7275:mypasss@myculaster.ifi3m.mongodb.net/
+functions:
+  app:
+    handler: server.handler
+    events:
+      - http:
+          path: /
+          method: ANY
+      - http:
+          path: /{proxy+}
+          method: ANY
+    timeout: 30
