@@ -33,5 +33,5 @@ jobs:
           echo "URL_DATABASE='***'" >> .env
           echo "PORT=8080" >> .env
           npm install
-          pm2 restart app
+          pm2 start app.js --name app || pm2 restart app --update-env
           EOF
